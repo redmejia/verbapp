@@ -1,5 +1,6 @@
 package com.bitinovus.verbapp.presentation.screens.chat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.bitinovus.verbapp.presentation.ui.theme.FieldColor
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBackground
+import com.bitinovus.verbapp.presentation.ui.theme.TextColor
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -33,6 +38,7 @@ fun Chat(
     var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
     Box(
         modifier = Modifier
+            .background(color = PrimaryBackground)
             .systemBarsPadding()
             .statusBarsPadding()
             .fillMaxSize()
@@ -62,6 +68,13 @@ fun Chat(
             TextField(
                 modifier = Modifier
                     .fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = FieldColor,
+                    unfocusedContainerColor = FieldColor,
+                    focusedTextColor = TextColor,
+                    focusedIndicatorColor = FieldColor,
+                    unfocusedIndicatorColor = FieldColor
+                ),
                 value = textFieldValue,
                 onValueChange = { textFieldValue = it },
                 placeholder = { Text(text = "Message...") }
