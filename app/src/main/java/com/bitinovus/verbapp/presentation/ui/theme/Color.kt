@@ -11,11 +11,12 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val PrimaryBackground = Color.White
-val FieldColor = Color(0xFFF4F4F4)
+val PrimaryGray00 = Color(0xFFF4F4F4)
 
 
-val senderBubble = Color(0xFF64B5F6)
-val receiverBubble = Color(0xFF81C784)
+val senderBubble = Color(0xFF5E78FD)
+//val receiverBubble = Color(0xFFEFF2F7)
+
 val textFieldBackground = Color.White
 val TextColor = Color.Black
 
