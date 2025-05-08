@@ -1,4 +1,4 @@
-package com.bitinovus.verbapp.ui.theme
+package com.bitinovus.verbapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
