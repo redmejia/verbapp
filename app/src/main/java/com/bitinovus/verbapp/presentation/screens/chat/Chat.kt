@@ -70,6 +70,8 @@ fun Chat(
         ChatMessage.Sender(id = 13, subjectType = "Receiver", message = "ok"),
         ChatMessage.Sender(id = 14, subjectType = "Receiver", message = "ok"),
         ChatMessage.Sender(id = 15, subjectType = "Receiver", message = "ok"),
+        ChatMessage.Sender(id = 16, subjectType = "Sender", message = "ok"),
+        ChatMessage.Sender(id = 17, subjectType = "Receiver", message = "What about you?"),
     ).reversed()
 
     var textFieldValue by remember { mutableStateOf("") }
