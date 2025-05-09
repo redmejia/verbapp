@@ -16,9 +16,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.bitinovus.verbapp.presentation.screens.chat.Chat
-import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBackground
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
 import com.bitinovus.verbapp.presentation.ui.theme.VerbappTheme
-import com.bitinovus.verbapp.presentation.ui.theme.TextColor
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -34,8 +34,8 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             windowInsets = TopAppBarDefaults.windowInsets,
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = PrimaryBackground,
-                                titleContentColor = TextColor,
+                                containerColor = PrimaryWhite00,
+                                titleContentColor = PrimaryBlack00,
                             ),
                             title = {
                                 Text("Verbapp")

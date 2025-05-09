@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -14,28 +14,33 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.bitinovus.verbapp.presentation.components.bubble.Bubble
 import com.bitinovus.verbapp.presentation.components.prompt.PromptTextField
-import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBackground
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryGray00
 import com.bitinovus.verbapp.presentation.ui.theme.senderBubble
+import com.bitinovus.verbapp.R
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Chat(
     contentPadding: PaddingValues,
 ) {
-    var textFieldValue by remember { mutableStateOf("") }
 
     val messageList = listOf(
         ChatMessage.Sender(id = 1, subjectType = "Sender", message = "Hello! How are you?"),
@@ -67,17 +72,19 @@ fun Chat(
         ChatMessage.Sender(id = 15, subjectType = "Receiver", message = "ok"),
     ).reversed()
 
+    var textFieldValue by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .statusBarsPadding()
             .navigationBarsPadding()
             .fillMaxSize()
-            .background(color = PrimaryBackground)
+            .background(color = PrimaryWhite00)
     ) {
         LazyColumn(
             modifier = Modifier
                 .weight(1f),
-             verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = contentPadding,
             reverseLayout = true,
         ) {
@@ -89,24 +96,47 @@ fun Chat(
                     contentText = {
                         Text(
                             text = it.message,
-                            color = if (isSender) Color.White else Color.Black,
+                            color = if (isSender) PrimaryWhite00 else PrimaryBlack00,
                             modifier = Modifier.padding(4.dp)
                         )
                     }
                 )
             }
         }
-        PromptTextField(
+        Row(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
-                .imePadding()
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(50.dp)),
-            value = textFieldValue,
-            onValueChange = { textFieldValue = it },
-            placeHolder = { Text(text = "Message...") },
-            trailingIcon = {}
-        )
+                .imePadding(),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            PromptTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(50.dp)),
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
+                placeHolder = { Text(text = "Message...") },
+            )
+            if(textFieldValue.isNotBlank()) {
+                IconButton(
+                    modifier = Modifier
+                        .background(
+                            color = PrimaryWhite00,
+                            shape = RoundedCornerShape(50.dp)
+                        )
+                        .padding(4.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = senderBubble
+                    ),
+                    onClick = {}) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.filled_send),
+                        contentDescription = "send",
+                        tint = PrimaryWhite00
+                    )
+                }
+            }
+        }
     }
 }
 
