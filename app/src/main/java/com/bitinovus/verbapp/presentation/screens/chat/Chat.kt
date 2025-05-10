@@ -72,6 +72,8 @@ fun Chat(
         ChatMessage.Sender(id = 15, subjectType = "Receiver", message = "ok"),
         ChatMessage.Sender(id = 16, subjectType = "Sender", message = "ok"),
         ChatMessage.Sender(id = 17, subjectType = "Receiver", message = "What about you?"),
+        ChatMessage.Sender(id = 18, subjectType = "Receiver", message = "What about you?"),
+        ChatMessage.Sender(id = 19, subjectType = "Receiver", message = "What about you?"),
     ).reversed()
 
     var textFieldValue by remember { mutableStateOf("") }
@@ -114,7 +116,7 @@ fun Chat(
             PromptTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(50.dp)),
+                    .clip(RoundedCornerShape(30.dp)),
                 value = textFieldValue,
                 onValueChange = { textFieldValue = it },
                 placeHolder = { Text(text = "Message...") },
