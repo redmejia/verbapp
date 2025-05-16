@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
@@ -18,6 +20,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val apiBaseURL = gradleLocalProperties(rootDir, providers)
+            .getProperty("API_BASE_URL", "")
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseURL\"")
     }
 
     buildTypes {
@@ -38,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -74,6 +81,9 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation("com.google.code.gson:gson:$gson_version")
+
+    // Logging for testing
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
