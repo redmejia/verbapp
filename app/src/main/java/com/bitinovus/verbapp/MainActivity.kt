@@ -21,9 +21,11 @@ import com.bitinovus.verbapp.presentation.screens.chat.Chat
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
 import com.bitinovus.verbapp.presentation.ui.theme.VerbappTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {

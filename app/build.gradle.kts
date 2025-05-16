@@ -1,4 +1,6 @@
 plugins {
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -41,8 +43,37 @@ android {
 
 dependencies {
 
+    val retrofit_version = "2.9.0"
+    val gson_version = "2.10.1"
+
+    val lifecycle_version = "2.8.7"
+
+    // val nav_version = "2.8.9"
+
     // Splash screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // Hilt - Dagger
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("com.google.dagger:hilt-android:2.56.1")
+    ksp("com.google.dagger:hilt-compiler:2.56.1")
+
+    // ROOM
+    // implementation("androidx.room:room-runtime:$room_version")
+    // ksp("androidx.room:room-compiler:$room_version")
+
+    // Jetpack Compose Navigation integration
+    // implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    // ViewModel utilities for Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+
+    // Retrofit - Gson
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
+    implementation("com.google.code.gson:gson:$gson_version")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
