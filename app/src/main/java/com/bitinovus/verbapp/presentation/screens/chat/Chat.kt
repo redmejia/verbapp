@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +37,7 @@ import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Chat(
-    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
 
     val messageList = listOf(
@@ -73,23 +71,25 @@ fun Chat(
         ChatMessage.Sender(id = 16, subjectType = "Sender", message = "ok"),
         ChatMessage.Sender(id = 17, subjectType = "Receiver", message = "What about you?"),
         ChatMessage.Sender(id = 18, subjectType = "Receiver", message = "What about you?"),
-        ChatMessage.Sender(id = 19, subjectType = "Receiver", message = "What about you?"),
+        ChatMessage.Sender(id = 19, subjectType = "Receiver", message = "What about you?XXX"),
     ).reversed()
 
     var textFieldValue by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding()
+        modifier = modifier
             .fillMaxSize()
+            // .statusBarsPadding()
+            // .navigationBarsPadding()
             .background(color = PrimaryWhite00)
     ) {
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
                 .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = contentPadding,
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp),
             reverseLayout = true,
         ) {
             items(items = messageList, key = { it.id }) {
@@ -115,13 +115,13 @@ fun Chat(
         ) {
             PromptTextField(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(2f)
                     .clip(RoundedCornerShape(30.dp)),
                 value = textFieldValue,
                 onValueChange = { textFieldValue = it },
                 placeHolder = { Text(text = "Message...") },
             )
-            if(textFieldValue.isNotBlank()) {
+            if (textFieldValue.isNotBlank()) {
                 IconButton(
                     modifier = Modifier
                         .background(
