@@ -2,6 +2,8 @@ package com.bitinovus.verbapp.di
 
 import com.bitinovus.verbapp.BuildConfig
 import com.bitinovus.verbapp.data.remote.api.ApiService
+import com.bitinovus.verbapp.data.remote.repository.ApiRepositoryImpl
+import com.bitinovus.verbapp.domain.repository.ApiRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +19,8 @@ import javax.inject.Singleton
 object AppModule {
 
     // Logger
-    @Provides
     @Singleton
+    @Provides
     fun provideOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -38,5 +40,10 @@ object AppModule {
             .build()
             .create(ApiService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideApiRepositoryImpl(api: ApiService): ApiRepositoryImpl =
+        ApiRepositoryImpl(api)
 
 }
