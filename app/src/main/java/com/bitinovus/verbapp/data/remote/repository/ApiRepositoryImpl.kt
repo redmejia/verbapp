@@ -23,8 +23,7 @@ class ApiRepositoryImpl @Inject constructor(
                 } else {
                     Response()
                 }
-            } catch (e: Exception) {
-                Log.e("ERROR-RESP", "prompt: $e")
+            } catch (_: Exception) {
                 Response()
             }
             response

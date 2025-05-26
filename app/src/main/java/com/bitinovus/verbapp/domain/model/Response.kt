@@ -1,6 +1,7 @@
 package com.bitinovus.verbapp.domain.model
 
 data class Response(
+    val chatID: String = "",
     val userID: String = "",
     val timestamp: Long = 0L,
     val text: String = "",
