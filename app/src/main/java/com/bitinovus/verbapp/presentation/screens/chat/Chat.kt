@@ -32,7 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bitinovus.verbapp.presentation.components.bubble.Bubble
 import com.bitinovus.verbapp.presentation.components.prompt.PromptTextField
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryGray00
-import com.bitinovus.verbapp.presentation.ui.theme.senderBubble
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryPurple40
 import com.bitinovus.verbapp.R
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
@@ -114,7 +114,7 @@ fun Chat(
                 when (chat) {
                     is ChatState.Prompt ->
                         Bubble(
-                            backgroundColor = senderBubble,
+                            backgroundColor = PrimaryPurple40,
                             isSender = true,
                             contentText = {
                                 Text(
@@ -172,7 +172,7 @@ fun Chat(
                         )
                         .padding(4.dp),
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = senderBubble
+                        containerColor = PrimaryPurple40
                     ),
                     onClick = {
                         // chatViewModel.getGenerated(text = textPrompt)
