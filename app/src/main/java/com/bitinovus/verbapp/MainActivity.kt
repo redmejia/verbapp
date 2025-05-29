@@ -5,18 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
@@ -25,9 +23,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -66,14 +66,36 @@ class MainActivity : ComponentActivity() {
                                 titleContentColor = PrimaryBlack00,
                             ),
                             title = {
-                                Image(
-                                    modifier = Modifier
-                                        .size(34.dp)
-                                        .clip(shape = RoundedCornerShape(50.dp)),
-                                    painter = painterResource(id = R.drawable.verba_filled),
-                                    contentDescription = null
-                                )
-                                // Text("Verbapp")
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        modifier = Modifier
+                                            .size(34.dp)
+                                            .clip(shape = RoundedCornerShape(50.dp)),
+                                        painter = painterResource(id = R.drawable.verba_filled),
+                                        contentDescription = null
+                                    )
+                                    Column(
+                                        modifier = Modifier.padding(start = 5.dp),
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            "with Gemini",
+                                            style = TextStyle(
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        )
+                                        Text(
+                                            "2.0 Flash",
+                                            style = TextStyle(
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        )
+                                    }
+                                }
                             },
                         )
                     },
@@ -87,3 +109,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
