@@ -13,7 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 val PrimaryGray00 = Color(0xFFF4F4F4)
 
 
-val senderBubble = Color(0xFF5E78FD)
+val PrimaryPurple40 = Color(0xFF5E78FD)
+val PrimaryPurple80 = Color(0xFFD0BCFF)
 //val receiverBubble = Color(0xFFEFF2F7)
 
 val PrimaryBlack00 = Color.Black
