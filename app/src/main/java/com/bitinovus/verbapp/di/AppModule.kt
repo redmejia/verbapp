@@ -3,7 +3,6 @@ package com.bitinovus.verbapp.di
 import com.bitinovus.verbapp.BuildConfig
 import com.bitinovus.verbapp.data.remote.api.ApiService
 import com.bitinovus.verbapp.data.remote.repository.ApiRepositoryImpl
-import com.bitinovus.verbapp.domain.repository.ApiRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

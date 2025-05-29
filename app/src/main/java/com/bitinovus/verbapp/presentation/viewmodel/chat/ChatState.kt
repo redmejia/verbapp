@@ -16,7 +16,9 @@ sealed class ChatState {
         override val chatID: String = "",
         override val text: String = "",
     ) : ChatState()
+
+    data class Loading(
+        override val chatID: String = "",
+        override val text: String = "",
+    ) : ChatState()
 }
-
-
-

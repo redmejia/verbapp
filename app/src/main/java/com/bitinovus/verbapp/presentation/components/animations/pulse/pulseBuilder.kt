@@ -41,6 +41,6 @@ fun pulsarBuilder(pulsarRadius: Float, floatActionSize: Int): Pair<Float, Float>
 }
 
 data class PulseDimension(
-    val outerActionSize: Pair<Int, Int> = Pair(20, 20),
-    val innerActionSize: Pair<Int, Int> = Pair(45, 45),
+    val outerDimensionSize: Pair<Int, Int> = Pair(20, 20),
+    val innerDimensionSize: Pair<Int, Int> = Pair(45, 45),
 )

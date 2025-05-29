@@ -1,6 +1,5 @@
 package com.bitinovus.verbapp.data.remote.repository
 
-import android.util.Log
 import com.bitinovus.verbapp.data.remote.api.ApiService
 import com.bitinovus.verbapp.data.remote.model.TextPrompt
 import com.bitinovus.verbapp.data.remote.model.toResponse

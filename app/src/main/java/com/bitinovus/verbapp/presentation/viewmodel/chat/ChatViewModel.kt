@@ -3,10 +3,10 @@ package com.bitinovus.verbapp.presentation.viewmodel.chat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bitinovus.verbapp.BuildConfig
 import com.bitinovus.verbapp.data.remote.model.TextPrompt
 import com.bitinovus.verbapp.data.remote.repository.ApiRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +22,9 @@ class ChatViewModel @Inject constructor(
     private val _chatUIState = MutableStateFlow<List<ChatState>>(emptyList())
     val chatUIState: StateFlow<List<ChatState>> = _chatUIState.asStateFlow()
 
+    private val _thinkingState = MutableStateFlow<Boolean>(false)
+    val thinkingState: StateFlow<Boolean> = _thinkingState.asStateFlow()
+
 
     fun chatPrompt(text: String) {
         viewModelScope.launch {
@@ -34,13 +37,19 @@ class ChatViewModel @Inject constructor(
 
                     chat.add(ChatState.Prompt(chatID = chatUUID, text = text))
 
+                    chat.add(ChatState.Loading(chatID = "Loading-$chatUUID"))
+
                     _chatUIState.value = chat
 
-                    val resp  = _chatUIState.value.toMutableList()
+                    _thinkingState.value = true
+                    val resp = _chatUIState.value
+                        .filterNot { it is ChatState.Loading }
+                        .toMutableList()
 
+                    val token = "Bearer ${BuildConfig.TOKEN}"
                     val generatedText =
                         api.prompt(
-                            token = "NOT IMPLEMENTED YET",
+                            token = token,
                             textPrompt = TextPrompt(text = text)
                         )
 
@@ -50,8 +59,8 @@ class ChatViewModel @Inject constructor(
                             text = generatedText.text
                         )
                     )
-                    delay(2000L)
-
+                    // delay(2000L) testing
+                    _thinkingState.value = false
                     _chatUIState.value = resp
                 }
 

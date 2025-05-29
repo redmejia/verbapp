@@ -23,10 +23,10 @@ fun Pulse(
     innerColor: Color = PrimaryPurple80,
 ) {
     val floatOuterActionSize by remember {
-        mutableStateOf(IntSize(dimension.outerActionSize.first, dimension.outerActionSize.second))
+        mutableStateOf(IntSize(dimension.outerDimensionSize.first, dimension.outerDimensionSize.second))
     }
     val floatInnerActionSize by remember {
-        mutableStateOf(IntSize(dimension.innerActionSize.first, dimension.innerActionSize.second))
+        mutableStateOf(IntSize(dimension.innerDimensionSize.first, dimension.innerDimensionSize.second))
     }
 
 
