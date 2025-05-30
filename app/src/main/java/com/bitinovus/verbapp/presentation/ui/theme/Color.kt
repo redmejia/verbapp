@@ -19,6 +19,7 @@ val PrimaryPurple80 = Color(0xFFD0BCFF)
 
 val PrimaryBlack00 = Color.Black
 val PrimaryWhite00 = Color.White
+val PrimaryWhite90 = Color(0x3CFFFFFF)
 
 val accent = Color(0xFF00BCD4)
 

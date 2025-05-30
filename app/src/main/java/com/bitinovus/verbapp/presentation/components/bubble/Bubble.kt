@@ -23,7 +23,7 @@ fun Bubble(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
             .wrapContentWidth(align = if (isSender) Alignment.End else Alignment.Start)
             .shadow(3.dp, RoundedCornerShape(10.dp))
             .background(

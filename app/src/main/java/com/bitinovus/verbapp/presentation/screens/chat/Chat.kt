@@ -1,6 +1,7 @@
 package com.bitinovus.verbapp.presentation.screens.chat
 
 
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +39,9 @@ import com.bitinovus.verbapp.presentation.ui.theme.PrimaryGray00
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryPurple40
 import com.bitinovus.verbapp.R
 import com.bitinovus.verbapp.presentation.components.animations.pulse.PulseDimension
+import com.bitinovus.verbapp.presentation.components.bubble.ActionBubble
+import com.bitinovus.verbapp.presentation.components.bubble.CopyActionButton
+import com.bitinovus.verbapp.presentation.components.bubble.SaveActionButton
 import com.bitinovus.verbapp.presentation.components.loader.PulseLoader
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
@@ -72,7 +77,6 @@ fun Chat(
     ) {
 
         LazyColumn(
-
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
@@ -97,22 +101,41 @@ fun Chat(
                         )
 
                     is ChatState.Generated -> {
-                        Bubble(
+                        Column(
                             modifier = Modifier.animateItem(
                                 fadeInSpec = spring(stiffness = Spring.StiffnessVeryLow),
-                                fadeOutSpec = spring(stiffness = Spring.StiffnessLow),
-                                placementSpec = spring()
-                            ),
-                            backgroundColor = PrimaryGray00,
-                            isSender = false,
-                            contentText = {
-                                Text(
-                                    text = chat.text,
-                                    color = PrimaryBlack00,
-                                    modifier = Modifier.padding(4.dp)
+                                fadeOutSpec = spring(stiffness = Spring.StiffnessVeryLow),
+                                placementSpec = null
+                            )
+                        ) {
+                            Bubble(
+                                backgroundColor = PrimaryGray00,
+                                isSender = false,
+                                contentText = {
+                                    Text(
+                                        text = chat.text,
+                                        color = PrimaryBlack00,
+                                        modifier = Modifier.padding(4.dp)
+                                    )
+                                }
+                            )
+                            ActionBubble(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                            ) {
+                                CopyActionButton(
+                                    unselectedImage = R.drawable.content_copy,
+                                    selectedImage = R.drawable.filled_content_copy,
+                                    contentDescription = "copy action",
+                                    onClick = { Log.d("ACTION", "Chat: MOCK copy data") }
+                                )
+                                SaveActionButton(
+                                    selectedImage = R.drawable.data_saver,
+                                    contentDescription = "save action",
+                                    onClick = { Log.d("ACTION", "Chat: SAVED") }
                                 )
                             }
-                        )
+                        }
                     }
 
                     is ChatState.Loading -> {
@@ -122,13 +145,12 @@ fun Chat(
                                 outerDimensionSize = Pair(10, 10),
                                 innerDimensionSize = Pair(15, 15)
                             ),
-                            isLoading = thinking // loading
+                            isLoading = thinking
                         )
                     }
                 }
             }
         }
-
         Row(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -147,8 +169,7 @@ fun Chat(
                 IconButton(
                     modifier = Modifier
                         .background(
-                            color = PrimaryWhite00,
-                            shape = RoundedCornerShape(50.dp)
+                            color = PrimaryWhite00
                         )
                         .padding(4.dp),
                     colors = IconButtonDefaults.iconButtonColors(
