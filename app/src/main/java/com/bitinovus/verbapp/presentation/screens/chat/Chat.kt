@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +48,9 @@ import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
 import com.bitinovus.verbapp.presentation.viewmodel.chat.ChatState
 import com.bitinovus.verbapp.presentation.viewmodel.chat.ChatViewModel
+import android.content.ClipData
+import android.content.Context
+import android.content.ClipboardManager
 
 @Composable
 fun Chat(
@@ -67,6 +71,8 @@ fun Chat(
             lazyListState.animateScrollToItem(0)
         }
     }
+
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -127,7 +133,13 @@ fun Chat(
                                     unselectedImage = R.drawable.content_copy,
                                     selectedImage = R.drawable.filled_content_copy,
                                     contentDescription = "copy action",
-                                    onClick = { Log.d("ACTION", "Chat: MOCK copy data") }
+                                    onClick = {
+                                        val clipboardManager: ClipboardManager =
+                                            context.getSystemService(Context.CLIPBOARD_SERVICE)
+                                                    as ClipboardManager
+                                        val clip: ClipData = ClipData.newPlainText("", chat.text)
+                                        clipboardManager.setPrimaryClip(clip)
+                                    }
                                 )
                                 SaveActionButton(
                                     selectedImage = R.drawable.data_saver,
