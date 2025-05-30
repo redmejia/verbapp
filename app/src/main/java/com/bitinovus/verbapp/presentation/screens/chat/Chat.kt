@@ -1,7 +1,6 @@
 package com.bitinovus.verbapp.presentation.screens.chat
 
 
-import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -42,7 +41,6 @@ import com.bitinovus.verbapp.R
 import com.bitinovus.verbapp.presentation.components.animations.pulse.PulseDimension
 import com.bitinovus.verbapp.presentation.components.bubble.ActionBubble
 import com.bitinovus.verbapp.presentation.components.bubble.CopyActionButton
-import com.bitinovus.verbapp.presentation.components.bubble.SaveActionButton
 import com.bitinovus.verbapp.presentation.components.loader.PulseLoader
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryWhite00
 import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack00
@@ -141,11 +139,12 @@ fun Chat(
                                         clipboardManager.setPrimaryClip(clip)
                                     }
                                 )
-                                SaveActionButton(
-                                    selectedImage = R.drawable.data_saver,
-                                    contentDescription = "save action",
-                                    onClick = { Log.d("ACTION", "Chat: SAVED") }
-                                )
+                                // Add more action buttons here
+                                // SaveActionButton(
+                                //    selectedImage = R.drawable.data_saver,
+                                //    contentDescription = "save action",
+                                //    onClick = { Log.d("ACTION", "Chat: SAVE") }
+                                // )
                             }
                         }
                     }
