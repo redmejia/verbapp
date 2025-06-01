@@ -26,6 +26,7 @@ fun ActionBubble(
     }
 }
 
+// Animated action button
 @Composable
 fun CopyActionButton(
     unselectedImage: Int,
@@ -57,7 +58,7 @@ fun CopyActionButton(
 }
 
 @Composable
-fun SaveActionButton(
+fun ActionButton(
     selectedImage: Int,
     contentDescription: String,
     modifier: Modifier = Modifier,

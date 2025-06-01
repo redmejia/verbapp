@@ -11,6 +11,13 @@ sealed class ChatState {
         override val text: String = "",
     ) : ChatState()
 
+    // Reply to generated text
+    data class Reply(
+        // override val subjectType: String = "Sender",
+        override val chatID: String = "",
+        override val text: String = "",
+    ) : ChatState()
+
     data class Generated(
         // override val subjectType: String = "Generated",
         override val chatID: String = "",

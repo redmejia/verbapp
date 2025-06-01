@@ -49,6 +49,10 @@ import com.bitinovus.verbapp.presentation.viewmodel.chat.ChatViewModel
 import android.content.ClipData
 import android.content.Context
 import android.content.ClipboardManager
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.text.style.TextOverflow
+import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryPurple80
 
 @Composable
 fun Chat(
@@ -59,8 +63,10 @@ fun Chat(
     val thinking by chatViewModel.thinkingState.collectAsState()
 
     var textPrompt by remember { mutableStateOf("") }
+    var replyMessage by remember { mutableStateOf("") }
 
     val lazyListState = rememberLazyListState()
+
 
     // Auto scroll when new message add to list
     LaunchedEffect(messageList.size) {
@@ -104,6 +110,42 @@ fun Chat(
                             }
                         )
 
+                    is ChatState.Reply -> {
+                        Column {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp)
+                                    .background(
+                                        color = PrimaryGray00,
+                                        shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    replyMessage,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = PrimaryBlack00,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
+
+                            Bubble(
+                                backgroundColor = PrimaryPurple40,
+                                isSender = true,
+                                contentText = {
+                                    Text(
+                                        text = chat.text,
+                                        color = PrimaryWhite00,
+                                        modifier = Modifier.padding(4.dp)
+                                    )
+                                }
+                            )
+                        }
+                    }
+
                     is ChatState.Generated -> {
                         Column(
                             modifier = Modifier.animateItem(
@@ -139,7 +181,13 @@ fun Chat(
                                         clipboardManager.setPrimaryClip(clip)
                                     }
                                 )
-                                // Add more action buttons here
+                                // Reply action
+                                ActionButton(
+                                    selectedImage = R.drawable.rounded_reply,
+                                    contentDescription = "reply prompt",
+                                    onClick = { replyMessage = chat.text }
+                                )
+                                // Add more action buttons here Save, Share... etc
                                 // SaveActionButton(
                                 //    selectedImage = R.drawable.data_saver,
                                 //    contentDescription = "save action",
@@ -162,39 +210,66 @@ fun Chat(
                 }
             }
         }
-        Row(
+
+        Column(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .imePadding(),
-            verticalAlignment = Alignment.Bottom
         ) {
-            PromptTextField(
-                modifier = Modifier
-                    .weight(2f)
-                    .clip(RoundedCornerShape(30.dp)),
-                value = textPrompt,
-                onValueChange = { textPrompt = it },
-                placeHolder = { Text(text = "Message...") },
-            )
-            if (textPrompt.isNotBlank()) {
-                IconButton(
+            if (replyMessage.isNotBlank()) {
+                Box(
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
                         .background(
-                            color = PrimaryWhite00
-                        )
-                        .padding(4.dp),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = PrimaryPurple40
-                    ),
-                    onClick = {
-                        chatViewModel.chatPrompt(text = textPrompt)
-                        textPrompt = ""
-                    }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.filled_send),
-                        contentDescription = "send",
-                        tint = PrimaryWhite00
+                            color = PrimaryGray00,
+                            shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        replyMessage,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = PrimaryBlack00,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .imePadding(),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                PromptTextField(
+                    modifier = Modifier
+                        .weight(2f)
+                        .clip(RoundedCornerShape(30.dp)),
+                    value = textPrompt,
+                    onValueChange = { textPrompt = it },
+                    placeHolder = { Text(text = "Message...") },
+                )
+                if (textPrompt.isNotBlank()) {
+                    IconButton(
+                        modifier = Modifier
+                            .background(color = PrimaryGray00)
+                            .padding(4.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = PrimaryPurple40
+                        ),
+                        onClick = {
+                            chatViewModel.chatPrompt(text = textPrompt)
+                            textPrompt = ""
+                            replyMessage = ""
+                        }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.filled_send),
+                            contentDescription = "send",
+                            tint = PrimaryWhite00
+                        )
+                    }
                 }
             }
         }
