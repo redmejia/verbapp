@@ -49,7 +49,11 @@ import com.bitinovus.verbapp.presentation.viewmodel.chat.ChatViewModel
 import android.content.ClipData
 import android.content.Context
 import android.content.ClipboardManager
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
 
@@ -227,14 +231,23 @@ fun Chat(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        replyMessage!!,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = PrimaryBlack00,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            replyMessage!!,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = PrimaryBlack00,
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+                        Icon(
+                            Icons.Filled.Clear,
+                            contentDescription = "clear reply bubble",
+                            modifier = Modifier.clickable { chatViewModel.setReplyMessage(null) }
+                        )
+                    }
                 }
             }
             Row(
@@ -265,7 +278,7 @@ fun Chat(
                                     messageToReply = replyMessage!!
                                 )
                                 chatViewModel.setReplyMessage(null)
-                            }else {
+                            } else {
                                 chatViewModel.chatPrompt(text = textPrompt)
                             }
                             textPrompt = ""
