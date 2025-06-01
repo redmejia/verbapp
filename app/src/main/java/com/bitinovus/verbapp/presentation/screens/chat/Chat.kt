@@ -52,7 +52,6 @@ import android.content.ClipboardManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
-import com.bitinovus.verbapp.presentation.ui.theme.PrimaryPurple80
 
 @Composable
 fun Chat(
@@ -61,9 +60,9 @@ fun Chat(
 ) {
     val messageList by chatViewModel.chatUIState.collectAsState()
     val thinking by chatViewModel.thinkingState.collectAsState()
+    val replyMessage by chatViewModel.replyMessage.collectAsState()
 
     var textPrompt by remember { mutableStateOf("") }
-    var replyMessage by remember { mutableStateOf("") }
 
     val lazyListState = rememberLazyListState()
 
@@ -123,15 +122,14 @@ fun Chat(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    replyMessage,
-                                    maxLines = 1,
+                                    chat.generatedText,
+                                    maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
                                     color = PrimaryBlack00,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                 )
                             }
-
                             Bubble(
                                 backgroundColor = PrimaryPurple40,
                                 isSender = true,
@@ -185,7 +183,9 @@ fun Chat(
                                 ActionButton(
                                     selectedImage = R.drawable.rounded_reply,
                                     contentDescription = "reply prompt",
-                                    onClick = { replyMessage = chat.text }
+                                    onClick = {
+                                        chatViewModel.setReplyMessage(chat.text)
+                                    }
                                 )
                                 // Add more action buttons here Save, Share... etc
                                 // SaveActionButton(
@@ -216,7 +216,7 @@ fun Chat(
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .imePadding(),
         ) {
-            if (replyMessage.isNotBlank()) {
+            if (replyMessage != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -228,7 +228,7 @@ fun Chat(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        replyMessage,
+                        replyMessage!!,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = PrimaryBlack00,
@@ -254,15 +254,22 @@ fun Chat(
                 if (textPrompt.isNotBlank()) {
                     IconButton(
                         modifier = Modifier
-                            .background(color = PrimaryGray00)
                             .padding(4.dp),
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = PrimaryPurple40
                         ),
                         onClick = {
-                            chatViewModel.chatPrompt(text = textPrompt)
+                            if (replyMessage != null) {
+                                chatViewModel.replyMessage(
+                                    prompt = textPrompt,
+                                    messageToReply = replyMessage!!
+                                )
+                                chatViewModel.setReplyMessage(null)
+                            }else {
+                                chatViewModel.chatPrompt(text = textPrompt)
+                            }
                             textPrompt = ""
-                            replyMessage = ""
+
                         }) {
                         Icon(
                             painter = painterResource(id = R.drawable.filled_send),

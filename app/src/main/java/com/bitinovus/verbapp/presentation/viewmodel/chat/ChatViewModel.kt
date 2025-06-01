@@ -7,6 +7,7 @@ import com.bitinovus.verbapp.BuildConfig
 import com.bitinovus.verbapp.data.remote.model.TextPrompt
 import com.bitinovus.verbapp.data.remote.repository.ApiRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +25,13 @@ class ChatViewModel @Inject constructor(
 
     private val _thinkingState = MutableStateFlow<Boolean>(false)
     val thinkingState: StateFlow<Boolean> = _thinkingState.asStateFlow()
+
+    private val _replyMessage = MutableStateFlow<String?>(null)
+    val replyMessage: StateFlow<String?> = _replyMessage.asStateFlow()
+
+    fun setReplyMessage(message: String?) {
+        _replyMessage.value = message
+    }
 
 
     fun chatPrompt(text: String) {
@@ -66,6 +74,53 @@ class ChatViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e("ERROR", "ERROR: $e")
+            }
+        }
+    }
+
+    fun replyMessage(prompt: String, messageToReply: String) {
+        viewModelScope.launch {
+            try {
+                if (messageToReply.isNotBlank()) {
+                    val chat = _chatUIState.value.toMutableList()
+
+                    val chatUUID = UUID.randomUUID().toString()
+                    chat.add(
+                        ChatState.Reply(
+                            chatID = chatUUID,
+                            generatedText = messageToReply,
+                            text = prompt
+                        )
+                    )
+                    chat.add(ChatState.Loading(chatID = "Reply_Loading-$chatUUID"))
+
+                    _chatUIState.value = chat
+
+                    _thinkingState.value = true
+
+                   val responseToReply = _chatUIState.value
+                        .filterNot { it is ChatState.Loading }
+                        .toMutableList()
+
+                    val token = "Bearer ${BuildConfig.TOKEN}"
+                    val generatedText =
+                        api.prompt(
+                            token = token,
+                            textPrompt = TextPrompt(text = prompt) // this will get an object
+                        )
+
+                    responseToReply.add(
+                        ChatState.Generated(
+                            chatID = generatedText.chatID,
+                            text = generatedText.text
+                        )
+                    )
+
+                    _thinkingState.value = false
+                    _chatUIState.value = responseToReply
+
+                }
+            } catch (_: Exception) {
             }
         }
     }

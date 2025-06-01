@@ -4,11 +4,13 @@ sealed class ChatState {
     // abstract val subjectType: String
     abstract val chatID: String
     abstract val text: String
+    abstract val generatedText: String
 
     data class Prompt(
         // override val subjectType: String = "Sender",
         override val chatID: String = "",
         override val text: String = "",
+        override val generatedText: String = ""
     ) : ChatState()
 
     // Reply to generated text
@@ -16,16 +18,21 @@ sealed class ChatState {
         // override val subjectType: String = "Sender",
         override val chatID: String = "",
         override val text: String = "",
+        override val generatedText: String = ""
+
     ) : ChatState()
 
     data class Generated(
         // override val subjectType: String = "Generated",
         override val chatID: String = "",
         override val text: String = "",
+        override val generatedText: String = ""
+
     ) : ChatState()
 
     data class Loading(
         override val chatID: String = "",
         override val text: String = "",
+        override val generatedText: String = ""
     ) : ChatState()
 }
