@@ -7,7 +7,6 @@ import com.bitinovus.verbapp.BuildConfig
 import com.bitinovus.verbapp.data.remote.model.TextPrompt
 import com.bitinovus.verbapp.data.remote.repository.ApiRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,11 +25,11 @@ class ChatViewModel @Inject constructor(
     private val _thinkingState = MutableStateFlow<Boolean>(false)
     val thinkingState: StateFlow<Boolean> = _thinkingState.asStateFlow()
 
-    private val _replyMessage = MutableStateFlow<String?>(null)
-    val replyMessage: StateFlow<String?> = _replyMessage.asStateFlow()
+    private val _replyText = MutableStateFlow<String?>(null)
+    val replyTextMessage: StateFlow<String?> = _replyText.asStateFlow()
 
-    fun setReplyMessage(message: String?) {
-        _replyMessage.value = message
+    fun setReplyTextMessage(message: String?) {
+        _replyText.value = message
     }
 
 
@@ -78,17 +77,18 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun replyMessage(prompt: String, messageToReply: String) {
+    // Reply to generated text
+    fun replyToGeneratedTextMessage(prompt: String, textToReply: String) {
         viewModelScope.launch {
             try {
-                if (messageToReply.isNotBlank()) {
+                if (textToReply.isNotBlank()) {
                     val chat = _chatUIState.value.toMutableList()
 
                     val chatUUID = UUID.randomUUID().toString()
                     chat.add(
                         ChatState.Reply(
                             chatID = chatUUID,
-                            generatedText = messageToReply,
+                            replyText = textToReply,
                             text = prompt
                         )
                     )

@@ -50,12 +50,11 @@ import android.content.ClipData
 import android.content.Context
 import android.content.ClipboardManager
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
+import com.bitinovus.verbapp.presentation.components.bubble.ReplyBubble
 
 @Composable
 fun Chat(
@@ -64,7 +63,7 @@ fun Chat(
 ) {
     val messageList by chatViewModel.chatUIState.collectAsState()
     val thinking by chatViewModel.thinkingState.collectAsState()
-    val replyMessage by chatViewModel.replyMessage.collectAsState()
+    val replyTextMessage by chatViewModel.replyTextMessage.collectAsState()
 
     var textPrompt by remember { mutableStateOf("") }
 
@@ -115,18 +114,9 @@ fun Chat(
 
                     is ChatState.Reply -> {
                         Column {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp)
-                                    .background(
-                                        color = PrimaryGray00,
-                                        shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            ReplyBubble {
                                 Text(
-                                    chat.generatedText,
+                                    chat.replyText,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
                                     color = PrimaryBlack00,
@@ -188,7 +178,7 @@ fun Chat(
                                     selectedImage = R.drawable.rounded_reply,
                                     contentDescription = "reply prompt",
                                     onClick = {
-                                        chatViewModel.setReplyMessage(chat.text)
+                                        chatViewModel.setReplyTextMessage(chat.text)
                                     }
                                 )
                                 // Add more action buttons here Save, Share... etc
@@ -214,28 +204,20 @@ fun Chat(
                 }
             }
         }
-
         Column(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .imePadding(),
         ) {
-            if (replyMessage != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .background(
-                            color = PrimaryGray00,
-                            shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
+            if (replyTextMessage != null) {
+                ReplyBubble {
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            replyMessage!!,
+                            replyTextMessage!!,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = PrimaryBlack00,
@@ -245,7 +227,7 @@ fun Chat(
                         Icon(
                             Icons.Filled.Clear,
                             contentDescription = "clear reply bubble",
-                            modifier = Modifier.clickable { chatViewModel.setReplyMessage(null) }
+                            modifier = Modifier.clickable { chatViewModel.setReplyTextMessage(null) }
                         )
                     }
                 }
@@ -272,12 +254,12 @@ fun Chat(
                             containerColor = PrimaryPurple40
                         ),
                         onClick = {
-                            if (replyMessage != null) {
-                                chatViewModel.replyMessage(
+                            if (replyTextMessage != null) {
+                                chatViewModel.replyToGeneratedTextMessage(
                                     prompt = textPrompt,
-                                    messageToReply = replyMessage!!
+                                    textToReply = replyTextMessage!!
                                 )
-                                chatViewModel.setReplyMessage(null)
+                                chatViewModel.setReplyTextMessage(null)
                             } else {
                                 chatViewModel.chatPrompt(text = textPrompt)
                             }
