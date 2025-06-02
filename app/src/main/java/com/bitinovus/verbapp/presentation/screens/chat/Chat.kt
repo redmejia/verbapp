@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -50,8 +49,10 @@ import android.content.ClipData
 import android.content.Context
 import android.content.ClipboardManager
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
 import com.bitinovus.verbapp.presentation.components.bubble.ReplyBubble
@@ -113,15 +114,28 @@ fun Chat(
                         )
 
                     is ChatState.Reply -> {
-                        Column {
-                            ReplyBubble {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            ReplyBubble(
+                                modifier = Modifier
+                                    .padding(start = 8.dp, end = 8.dp)
+                                    .wrapContentWidth(Alignment.End)
+                                    .background(
+                                        color = PrimaryGray00,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
                                 Text(
                                     chat.replyText,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
                                     color = PrimaryBlack00,
                                     modifier = Modifier
-                                        .fillMaxWidth()
+                                        .padding(4.dp),
                                 )
                             }
                             Bubble(
@@ -133,7 +147,7 @@ fun Chat(
                                         color = PrimaryWhite00,
                                         modifier = Modifier.padding(4.dp)
                                     )
-                                }
+                                },
                             )
                         }
                     }
@@ -169,7 +183,8 @@ fun Chat(
                                         val clipboardManager: ClipboardManager =
                                             context.getSystemService(Context.CLIPBOARD_SERVICE)
                                                     as ClipboardManager
-                                        val clip: ClipData = ClipData.newPlainText("", chat.text)
+                                        val clip: ClipData =
+                                            ClipData.newPlainText("", chat.text)
                                         clipboardManager.setPrimaryClip(clip)
                                     }
                                 )
@@ -210,7 +225,15 @@ fun Chat(
                 .imePadding(),
         ) {
             if (replyTextMessage != null) {
-                ReplyBubble {
+                ReplyBubble(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                        .background(
+                            color = PrimaryWhite00,
+                            shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
+                        )
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -227,14 +250,18 @@ fun Chat(
                         Icon(
                             Icons.Filled.Clear,
                             contentDescription = "clear reply bubble",
-                            modifier = Modifier.clickable { chatViewModel.setReplyTextMessage(null) }
+                            modifier = Modifier.clickable {
+                                chatViewModel.setReplyTextMessage(
+                                    null
+                                )
+                            }
                         )
                     }
                 }
             }
             Row(
                 modifier = Modifier
-                    .padding(vertical = 4.dp)
+                    // .padding(vertical = 4.dp)
                     .imePadding(),
                 verticalAlignment = Alignment.Bottom
             ) {
