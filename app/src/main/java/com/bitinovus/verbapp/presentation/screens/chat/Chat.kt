@@ -48,11 +48,24 @@ import com.bitinovus.verbapp.presentation.viewmodel.chat.ChatViewModel
 import android.content.ClipData
 import android.content.Context
 import android.content.ClipboardManager
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
 import com.bitinovus.verbapp.presentation.components.bubble.ReplyBubble
@@ -153,6 +166,9 @@ fun Chat(
                     }
 
                     is ChatState.Generated -> {
+
+                        var visible by rememberSaveable(chat.chatID) { mutableStateOf(false) }
+
                         Column(
                             modifier = Modifier.animateItem(
                                 fadeInSpec = spring(stiffness = Spring.StiffnessVeryLow),
@@ -161,6 +177,10 @@ fun Chat(
                             )
                         ) {
                             Bubble(
+                                modifier = Modifier
+                                    .clickable {
+                                        visible = !visible
+                                    },
                                 backgroundColor = PrimaryGray00,
                                 isSender = false,
                                 contentText = {
@@ -171,37 +191,51 @@ fun Chat(
                                     )
                                 }
                             )
-                            ActionBubble(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                            AnimatedVisibility(
+                                visible = visible,
+                                enter =
+                                    slideInVertically(
+                                        initialOffsetY = { it }
+                                    ) +
+                                            expandVertically(expandFrom = Alignment.Top) +
+                                            scaleIn(transformOrigin = TransformOrigin(0.5f, 0f)) +
+                                            fadeIn(initialAlpha = 0.3f),
+                                exit = slideOutVertically(
+                                    targetOffsetY = { it }
+                                ) + shrinkVertically() + fadeOut()
                             ) {
-                                CopyActionButton(
-                                    unselectedImage = R.drawable.content_copy,
-                                    selectedImage = R.drawable.filled_content_copy,
-                                    contentDescription = "copy action",
-                                    onClick = {
-                                        val clipboardManager: ClipboardManager =
-                                            context.getSystemService(Context.CLIPBOARD_SERVICE)
-                                                    as ClipboardManager
-                                        val clip: ClipData =
-                                            ClipData.newPlainText("", chat.text)
-                                        clipboardManager.setPrimaryClip(clip)
-                                    }
-                                )
-                                // Reply action
-                                ActionButton(
-                                    selectedImage = R.drawable.rounded_reply,
-                                    contentDescription = "reply prompt",
-                                    onClick = {
-                                        chatViewModel.setReplyTextMessage(chat.text)
-                                    }
-                                )
-                                // Add more action buttons here Save, Share... etc
-                                // SaveActionButton(
-                                //    selectedImage = R.drawable.data_saver,
-                                //    contentDescription = "save action",
-                                //    onClick = { Log.d("ACTION", "Chat: SAVE") }
-                                // )
+                                ActionBubble(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                ) {
+                                    CopyActionButton(
+                                        unselectedImage = R.drawable.content_copy,
+                                        selectedImage = R.drawable.filled_content_copy,
+                                        contentDescription = "copy action",
+                                        onClick = {
+                                            val clipboardManager: ClipboardManager =
+                                                context.getSystemService(Context.CLIPBOARD_SERVICE)
+                                                        as ClipboardManager
+                                            val clip: ClipData =
+                                                ClipData.newPlainText("", chat.text)
+                                            clipboardManager.setPrimaryClip(clip)
+                                        }
+                                    )
+                                    // Reply action
+                                    ActionButton(
+                                        selectedImage = R.drawable.rounded_reply,
+                                        contentDescription = "reply prompt",
+                                        onClick = {
+                                            chatViewModel.setReplyTextMessage(chat.text)
+                                        }
+                                    )
+                                    // Add more action buttons here Save, Share... etc
+                                    // SaveActionButton(
+                                    //    selectedImage = R.drawable.data_saver,
+                                    //    contentDescription = "save action",
+                                    //    onClick = { Log.d("ACTION", "Chat: SAVE") }
+                                    // )
+                                }
                             }
                         }
                     }
