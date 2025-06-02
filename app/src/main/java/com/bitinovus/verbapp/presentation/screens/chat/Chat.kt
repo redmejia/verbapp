@@ -57,6 +57,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -66,6 +67,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
 import com.bitinovus.verbapp.presentation.components.bubble.ReplyBubble
@@ -82,6 +84,8 @@ fun Chat(
     var textPrompt by remember { mutableStateOf("") }
 
     val lazyListState = rememberLazyListState()
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
 
     // Auto scroll when new message add to list
@@ -178,7 +182,10 @@ fun Chat(
                         ) {
                             Bubble(
                                 modifier = Modifier
-                                    .clickable {
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = null
+                                    ){
                                         visible = !visible
                                     },
                                 backgroundColor = PrimaryGray00,
@@ -227,6 +234,7 @@ fun Chat(
                                         contentDescription = "reply prompt",
                                         onClick = {
                                             chatViewModel.setReplyTextMessage(chat.text)
+                                            keyboardController?.show()
                                         }
                                     )
                                     // Add more action buttons here Save, Share... etc
