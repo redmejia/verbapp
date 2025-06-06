@@ -4,9 +4,10 @@ import com.bitinovus.verbapp.domain.model.GeneratedResponse
 import com.bitinovus.verbapp.domain.model.ResponseMetadata
 import com.google.gson.annotations.SerializedName
 
-data class GeneratedText(
+data class GeneratedTextDto(
     @SerializedName("chat_id") val chatID: String = "",
     @SerializedName("user_id") val userID: String = "",
+    @SerializedName("conversation_id") val conversationID: String = "",
     @SerializedName("timestamp") val timestamp: Long = 0L,
     @SerializedName("text") val text: String = "", // generated text
     @SerializedName("metadata") val metadata: Metadata = Metadata(modelName = "v0"),
@@ -17,7 +18,7 @@ data class Metadata(
 )
 
 // DTO to domain model
-fun GeneratedText.toGeneratedResponse(): GeneratedResponse {
+fun GeneratedTextDto.toGeneratedResponse(): GeneratedResponse {
     return GeneratedResponse(
         chatID = chatID,
         userID = userID,

@@ -50,14 +50,20 @@ class ChatViewModel @Inject constructor(
 
                     chat.add(ChatState.Prompt(chatID = prompt.chatID, text = prompt.text))
 
-                     chat.add(ChatState.Loading(chatID = "Loading-${prompt.chatID}"))
+                    chat.add(ChatState.Loading(chatID = "Loading-${prompt.chatID}"))
 
                     _chatUIState.value = chat
 
-//                    _thinkingState.value = true
-//                    val resp = _chatUIState.value
-//                        .filterNot { it is ChatState.Loading }
-//                        .toMutableList()
+                    _thinkingState.value = true
+                    val resp = _chatUIState.value
+                        .filterNot { it is ChatState.Loading }
+                        .toMutableList()
+
+                    val generated = api.aiGeneratedText(
+                        token = token,
+                        textPromptDto = TextPromptDto(conversationID = prompt.conversationID)
+                    )
+
 //
 //                    val token = "Bearer ${BuildConfig.TOKEN}"
 //                    val generatedText =
@@ -66,15 +72,15 @@ class ChatViewModel @Inject constructor(
 //                            textPrompt = TextPrompt(text = text)
 //                        )
 //
-//                    resp.add(
-//                        ChatState.Generated(
-//                            chatID = generatedText.chatID,// this id identify each generated text from backend
-//                            text = generatedText.text
-//                        )
-//                    )
+                    resp.add(
+                        ChatState.Generated(
+                            chatID = generated.chatID,// this id identify each generated text from backend
+                            text = generated.text
+                        )
+                    )
 //                    // delay(2000L) testing
-//                    _thinkingState.value = false
-//                    _chatUIState.value = resp
+                    _thinkingState.value = false
+                    _chatUIState.value = resp
                 }
 
             } catch (e: Exception) {

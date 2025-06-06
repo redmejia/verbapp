@@ -192,7 +192,7 @@ fun Chat(
                                 isSender = false,
                                 contentText = {
                                     Text(
-                                        text = "I ASK ${chat.text} ID ${chat.userID}",
+                                        text = chat.text,
                                         color = PrimaryBlack00,
                                         modifier = Modifier.padding(4.dp)
                                     )
@@ -324,16 +324,16 @@ fun Chat(
                             containerColor = PrimaryPurple40
                         ),
                         onClick = {
-                            chatViewModel.chatPrompt(text = textPrompt)
-//                            if (replyTextMessage != null) {
-//                                chatViewModel.replyToGeneratedTextMessage(
-//                                    prompt = textPrompt,
-//                                    textToReply = replyTextMessage!!
-//                                )
-//                                chatViewModel.setReplyTextMessage(null)
-//                            } else {
-//                                chatViewModel.chatPrompt(text = textPrompt)
-//                            }
+                            // chatViewModel.chatPrompt(text = textPrompt)
+                            if (replyTextMessage != null) {
+                                chatViewModel.replyToGeneratedTextMessage(
+                                    prompt = textPrompt,
+                                    textToReply = replyTextMessage!!
+                                )
+                                chatViewModel.setReplyTextMessage(null)
+                            } else {
+                                chatViewModel.chatPrompt(text = textPrompt)
+                            }
                             textPrompt = ""
 
                         }) {

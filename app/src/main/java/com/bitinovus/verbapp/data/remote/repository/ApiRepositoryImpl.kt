@@ -3,7 +3,9 @@ package com.bitinovus.verbapp.data.remote.repository
 import android.util.Log
 import com.bitinovus.verbapp.data.remote.api.ApiService
 import com.bitinovus.verbapp.data.remote.model.TextPromptDto
+import com.bitinovus.verbapp.data.remote.model.toGeneratedResponse
 import com.bitinovus.verbapp.data.remote.model.toPromptResponse
+import com.bitinovus.verbapp.domain.model.GeneratedResponse
 import com.bitinovus.verbapp.domain.model.PromptResponse
 import com.bitinovus.verbapp.domain.repository.ApiRepository
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +17,7 @@ class ApiRepositoryImpl @Inject constructor(
 ) : ApiRepository {
     override suspend fun prompt(token: String, textPromptDto: TextPromptDto): PromptResponse =
         withContext(Dispatchers.IO) {
-            val generatedResponse = try {
+            val prompt = try {
                 val resp = api.chatPrompt(token = token, textPromptDto = textPromptDto)
                 if (resp.isSuccessful) {
                     val body = resp.body()
@@ -26,10 +28,27 @@ class ApiRepositoryImpl @Inject constructor(
             } catch (_: Exception) {
                 PromptResponse()
             }
-            generatedResponse
+            prompt
         }
 
-
+    override suspend fun aiGeneratedText(
+        token: String,
+        textPromptDto: TextPromptDto,
+    ): GeneratedResponse =
+        withContext(Dispatchers.IO) {
+            val generatedResponse = try {
+                val resp = api.aiResponse(token = token, textPromptDto = textPromptDto)
+                if (resp.isSuccessful) {
+                    val body = resp.body()
+                    body?.toGeneratedResponse() ?: GeneratedResponse()
+                } else {
+                    GeneratedResponse()
+                }
+            } catch (_: Exception) {
+                GeneratedResponse()
+            }
+            generatedResponse
+        }
 }
 
 
