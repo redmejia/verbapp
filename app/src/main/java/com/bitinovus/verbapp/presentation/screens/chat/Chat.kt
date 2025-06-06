@@ -48,19 +48,16 @@ import com.bitinovus.verbapp.presentation.viewmodel.chat.ChatViewModel
 import android.content.ClipData
 import android.content.Context
 import android.content.ClipboardManager
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -116,6 +113,8 @@ fun Chat(
             reverseLayout = true,
         ) {
             items(items = messageList.reversed(), key = { it.chatID }) { chat ->
+                Log.d("CHAT", "Chat: ${messageList.reversed()}")
+
                 when (chat) {
                     is ChatState.Prompt ->
                         Bubble(
@@ -133,6 +132,7 @@ fun Chat(
                     is ChatState.Reply -> {
                         Column(
                             modifier = Modifier
+                                .padding(top = 6.dp)
                                 .fillMaxWidth(),
                             horizontalAlignment = Alignment.End
                         ) {
@@ -185,14 +185,14 @@ fun Chat(
                                     .clickable(
                                         indication = null,
                                         interactionSource = null
-                                    ){
+                                    ) {
                                         visible = !visible
                                     },
                                 backgroundColor = PrimaryGray00,
                                 isSender = false,
                                 contentText = {
                                     Text(
-                                        text = chat.text,
+                                        text = "I ASK ${chat.text} ID ${chat.userID}",
                                         color = PrimaryBlack00,
                                         modifier = Modifier.padding(4.dp)
                                     )
@@ -234,6 +234,7 @@ fun Chat(
                                         contentDescription = "reply prompt",
                                         onClick = {
                                             chatViewModel.setReplyTextMessage(chat.text)
+                                            visible = !visible
                                             keyboardController?.show()
                                         }
                                     )
@@ -255,7 +256,7 @@ fun Chat(
                                 outerDimensionSize = Pair(10, 10),
                                 innerDimensionSize = Pair(15, 15)
                             ),
-                            isLoading = thinking
+                            isLoading = thinking // loading
                         )
                     }
                 }
@@ -323,15 +324,16 @@ fun Chat(
                             containerColor = PrimaryPurple40
                         ),
                         onClick = {
-                            if (replyTextMessage != null) {
-                                chatViewModel.replyToGeneratedTextMessage(
-                                    prompt = textPrompt,
-                                    textToReply = replyTextMessage!!
-                                )
-                                chatViewModel.setReplyTextMessage(null)
-                            } else {
-                                chatViewModel.chatPrompt(text = textPrompt)
-                            }
+                            chatViewModel.chatPrompt(text = textPrompt)
+//                            if (replyTextMessage != null) {
+//                                chatViewModel.replyToGeneratedTextMessage(
+//                                    prompt = textPrompt,
+//                                    textToReply = replyTextMessage!!
+//                                )
+//                                chatViewModel.setReplyTextMessage(null)
+//                            } else {
+//                                chatViewModel.chatPrompt(text = textPrompt)
+//                            }
                             textPrompt = ""
 
                         }) {

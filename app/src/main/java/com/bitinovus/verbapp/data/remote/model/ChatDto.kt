@@ -1,6 +1,6 @@
 package com.bitinovus.verbapp.data.remote.model
 
-import com.bitinovus.verbapp.domain.model.Response
+import com.bitinovus.verbapp.domain.model.GeneratedResponse
 import com.bitinovus.verbapp.domain.model.ResponseMetadata
 import com.google.gson.annotations.SerializedName
 
@@ -17,8 +17,8 @@ data class Metadata(
 )
 
 // DTO to domain model
-fun GeneratedText.toResponse(): Response {
-    return Response(
+fun GeneratedText.toGeneratedResponse(): GeneratedResponse {
+    return GeneratedResponse(
         chatID = chatID,
         userID = userID,
         timestamp = timestamp,

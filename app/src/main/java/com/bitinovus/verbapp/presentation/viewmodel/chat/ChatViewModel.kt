@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bitinovus.verbapp.BuildConfig
-import com.bitinovus.verbapp.data.remote.model.TextPrompt
+import com.bitinovus.verbapp.data.remote.model.TextPromptDto
 import com.bitinovus.verbapp.data.remote.repository.ApiRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,35 +40,41 @@ class ChatViewModel @Inject constructor(
 
                     val chat = _chatUIState.value.toMutableList()
 
-                    val chatUUID = UUID.randomUUID().toString()
+                    val token = "Bearer ${BuildConfig.TOKEN}"
+                    val prompt = api.prompt(
+                        token = token,
+                        textPromptDto = TextPromptDto(text = text)
+                    )
+                    Log.d("CHAT", "chatPrompt RESP >>>>>>: $prompt")
+                    // val chatUUID = UUID.randomUUID().toString()
 
-                    chat.add(ChatState.Prompt(chatID = chatUUID, text = text))
+                    chat.add(ChatState.Prompt(chatID = prompt.chatID, text = prompt.text))
 
-                    chat.add(ChatState.Loading(chatID = "Loading-$chatUUID"))
+                     chat.add(ChatState.Loading(chatID = "Loading-${prompt.chatID}"))
 
                     _chatUIState.value = chat
 
-                    _thinkingState.value = true
-                    val resp = _chatUIState.value
-                        .filterNot { it is ChatState.Loading }
-                        .toMutableList()
-
-                    val token = "Bearer ${BuildConfig.TOKEN}"
-                    val generatedText =
-                        api.prompt(
-                            token = token,
-                            textPrompt = TextPrompt(text = text)
-                        )
-
-                    resp.add(
-                        ChatState.Generated(
-                            chatID = generatedText.chatID,// this id identify each generated text from backend
-                            text = generatedText.text
-                        )
-                    )
-                    // delay(2000L) testing
-                    _thinkingState.value = false
-                    _chatUIState.value = resp
+//                    _thinkingState.value = true
+//                    val resp = _chatUIState.value
+//                        .filterNot { it is ChatState.Loading }
+//                        .toMutableList()
+//
+//                    val token = "Bearer ${BuildConfig.TOKEN}"
+//                    val generatedText =
+//                        api.prompt(
+//                            token = token,
+//                            textPrompt = TextPrompt(text = text)
+//                        )
+//
+//                    resp.add(
+//                        ChatState.Generated(
+//                            chatID = generatedText.chatID,// this id identify each generated text from backend
+//                            text = generatedText.text
+//                        )
+//                    )
+//                    // delay(2000L) testing
+//                    _thinkingState.value = false
+//                    _chatUIState.value = resp
                 }
 
             } catch (e: Exception) {
@@ -98,7 +104,7 @@ class ChatViewModel @Inject constructor(
 
                     _thinkingState.value = true
 
-                   val responseToReply = _chatUIState.value
+                    val responseToReply = _chatUIState.value
                         .filterNot { it is ChatState.Loading }
                         .toMutableList()
 
@@ -106,7 +112,7 @@ class ChatViewModel @Inject constructor(
                     val generatedText =
                         api.prompt(
                             token = token,
-                            textPrompt = TextPrompt(text = prompt) // this will get an object
+                            textPromptDto = TextPromptDto(text = prompt) // this will get an object
                         )
 
                     responseToReply.add(
