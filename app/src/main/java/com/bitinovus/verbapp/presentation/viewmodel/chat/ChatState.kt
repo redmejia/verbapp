@@ -5,13 +5,14 @@ sealed class ChatState {
     abstract val chatID: String
     abstract val text: String
     abstract val userID: String
+    abstract val conversationID: String
     // abstract val replyText: String
 
     data class Prompt(
         // override val subjectType: String = "Sender",
         override val chatID: String = "",
         override val userID: String = "",
-        val conversationID: String = "",
+        override val conversationID: String = "",
         val timestamp: Long = 0L,
         override val text: String = "",
         //val replyText: String = "",
@@ -21,26 +22,27 @@ sealed class ChatState {
     data class Reply(
         // override val subjectType: String = "Sender",
         override val chatID: String = "",
-        override val text: String = "",
         override val userID: String = "",
-
+        override val conversationID: String = "",
+        override val text: String = "",
         val replyText: String = "",
     ) : ChatState()
 
     data class Generated(
         // override val subjectType: String = "Generated",
         override val chatID: String = "",
-        override val text: String = "",
         override val userID: String = "",
+        override val conversationID: String = "",
+        override val text: String = "",
 
         ) : ChatState()
 
     data class Loading(
         override val chatID: String = "",
-        override val text: String = "",
         override val userID: String = "",
-
-        ) : ChatState()
+        override val conversationID: String = "",
+        override val text: String = "",
+    ) : ChatState()
 }
 
 

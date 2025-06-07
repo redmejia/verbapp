@@ -3,8 +3,10 @@ package com.bitinovus.verbapp.data.remote.repository
 import android.util.Log
 import com.bitinovus.verbapp.data.remote.api.ApiService
 import com.bitinovus.verbapp.data.remote.model.TextPromptDto
+import com.bitinovus.verbapp.data.remote.model.toChatResponseList
 import com.bitinovus.verbapp.data.remote.model.toGeneratedResponse
 import com.bitinovus.verbapp.data.remote.model.toPromptResponse
+import com.bitinovus.verbapp.domain.model.ChatsResponse
 import com.bitinovus.verbapp.domain.model.GeneratedResponse
 import com.bitinovus.verbapp.domain.model.PromptResponse
 import com.bitinovus.verbapp.domain.repository.ApiRepository
@@ -48,6 +50,22 @@ class ApiRepositoryImpl @Inject constructor(
                 GeneratedResponse()
             }
             generatedResponse
+        }
+
+    override suspend fun getAllChats(token: String): List<ChatsResponse> =
+        withContext(Dispatchers.IO) {
+            val chats = try {
+                val resp = api.getChats(token = token)
+                if (resp.isSuccessful) {
+                    val body = resp.body()
+                    body?.toChatResponseList() ?: emptyList<ChatsResponse>()
+                } else {
+                    emptyList<ChatsResponse>()
+                }
+            } catch (_: Exception) {
+                emptyList<ChatsResponse>()
+            }
+            chats
         }
 }
 

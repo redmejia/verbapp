@@ -32,6 +32,31 @@ class ChatViewModel @Inject constructor(
         _replyText.value = message
     }
 
+    init {
+        viewModelScope.launch {
+            val token = "Bearer ${BuildConfig.TOKEN}"
+            val chats = api.getAllChats(token = token)
+            val alls = chats.flatMap {
+                listOf(
+                    ChatState.Prompt(
+                        chatID = it.prompt.chatID,
+                        userID = it.prompt.userID,
+                        text = it.prompt.text,
+                        conversationID = it.prompt.conversationID,
+                        timestamp = it.prompt.timestamp
+                    ),
+                    ChatState.Generated(
+                        chatID = it.generatedResponse.chatID,
+                        userID = it.generatedResponse.userID,
+                        text = it.generatedResponse.text
+                    )
+                )
+            }
+            _chatUIState.value = alls
+            Log.d("CHAT", "CHATS: $alls")
+        }
+    }
+
 
     fun chatPrompt(text: String) {
         viewModelScope.launch {
@@ -45,7 +70,6 @@ class ChatViewModel @Inject constructor(
                         token = token,
                         textPromptDto = TextPromptDto(text = text)
                     )
-                    Log.d("CHAT", "chatPrompt RESP >>>>>>: $prompt")
                     // val chatUUID = UUID.randomUUID().toString()
 
                     chat.add(ChatState.Prompt(chatID = prompt.chatID, text = prompt.text))

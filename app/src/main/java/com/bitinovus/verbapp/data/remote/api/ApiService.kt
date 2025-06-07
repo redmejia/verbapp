@@ -1,9 +1,11 @@
 package com.bitinovus.verbapp.data.remote.api
 
+import com.bitinovus.verbapp.data.remote.model.ChatsDto
 import com.bitinovus.verbapp.data.remote.model.GeneratedTextDto
 import com.bitinovus.verbapp.data.remote.model.TextPromptDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
@@ -25,4 +27,7 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body textPromptDto: TextPromptDto, // send conversation id
     ): Response<GeneratedTextDto>
+
+    @GET("chat")
+    suspend fun getChats(@Header("Authorization") token: String): Response<List<ChatsDto>>
 }
