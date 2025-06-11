@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,38 +24,65 @@ class ChatViewModel @Inject constructor(
     private val _thinkingState = MutableStateFlow<Boolean>(false)
     val thinkingState: StateFlow<Boolean> = _thinkingState.asStateFlow()
 
-    private val _replyText = MutableStateFlow<String?>(null)
-    val replyTextMessage: StateFlow<String?> = _replyText.asStateFlow()
+    private val _replyText = MutableStateFlow<ReplyMessageState?>(null)
+    val replyTextMessage: StateFlow<ReplyMessageState?> = _replyText.asStateFlow()
 
-    fun setReplyTextMessage(message: String?) {
-        _replyText.value = message
+    fun setReplyTextMessage(conversationID: String?, message: String?) {
+        _replyText.value = ReplyMessageState(
+            conversationID = conversationID,
+            generatedTextMessage = message
+        )
     }
 
     init {
         viewModelScope.launch {
-            val token = "Bearer ${BuildConfig.TOKEN}"
-            val chats = api.getAllChats(token = token)
-            val alls = chats.flatMap {
-                listOf(
-                    ChatState.Prompt(
-                        chatID = it.prompt.chatID,
-                        userID = it.prompt.userID,
-                        text = it.prompt.text,
-                        conversationID = it.prompt.conversationID,
-                        timestamp = it.prompt.timestamp
-                    ),
-                    ChatState.Generated(
-                        chatID = it.generatedResponse.chatID,
-                        userID = it.generatedResponse.userID,
-                        text = it.generatedResponse.text
+            val chats = api.getAllChats(token = TOKEN)
+            val chatList = chats.flatMap { chatItem ->
+
+                val chatList = mutableListOf<ChatState>()
+
+                if (chatItem.prompt.chatID.isNotBlank()) {
+                    chatList.add(
+                        ChatState.Prompt(
+                            chatID = chatItem.prompt.chatID,
+                            userID = chatItem.prompt.userID,
+                            conversationID = chatItem.prompt.conversationID,
+                            text = chatItem.prompt.text,
+                            timestamp = chatItem.prompt.timestamp
+                        )
                     )
-                )
+                }
+
+                if (chatItem.reply.chatID.isNotBlank()) {
+                    chatList.add(
+                        ChatState.Reply(
+                            chatID = chatItem.reply.chatID,
+                            userID = chatItem.reply.userID,
+                            conversationID = chatItem.reply.conversationID,
+                            timestamp = chatItem.reply.timestamp,
+                            replyText = chatItem.reply.replyText,
+                            text = chatItem.reply.text
+                        )
+                    )
+                }
+
+                if (chatItem.generatedResponse.chatID.isNotBlank()) {
+                    chatList.add(
+                        ChatState.Generated(
+                            chatID = chatItem.generatedResponse.chatID,
+                            userID = chatItem.generatedResponse.userID,
+                            conversationID = chatItem.generatedResponse.conversationID,
+                            text = chatItem.generatedResponse.text,
+                            timestamp = chatItem.generatedResponse.timestamp
+                        )
+                    )
+                }
+
+                chatList
             }
-            _chatUIState.value = alls
-            Log.d("CHAT", "CHATS: $alls")
+            _chatUIState.value = chatList
         }
     }
-
 
     fun chatPrompt(text: String) {
         viewModelScope.launch {
@@ -65,15 +91,19 @@ class ChatViewModel @Inject constructor(
 
                     val chat = _chatUIState.value.toMutableList()
 
-                    val token = "Bearer ${BuildConfig.TOKEN}"
+                    // val token = "Bearer ${BuildConfig.TOKEN}"
                     val prompt = api.prompt(
-                        token = token,
+                        token = TOKEN,
                         textPromptDto = TextPromptDto(text = text)
                     )
-                    // val chatUUID = UUID.randomUUID().toString()
 
-                    chat.add(ChatState.Prompt(chatID = prompt.chatID, text = prompt.text))
-
+                    chat.add(
+                        ChatState.Prompt(
+                            chatID = prompt.chatID,
+                            conversationID = prompt.conversationID,
+                            text = prompt.text
+                        )
+                    )
                     chat.add(ChatState.Loading(chatID = "Loading-${prompt.chatID}"))
 
                     _chatUIState.value = chat
@@ -84,81 +114,87 @@ class ChatViewModel @Inject constructor(
                         .toMutableList()
 
                     val generated = api.aiGeneratedText(
-                        token = token,
+                        token = TOKEN,
                         textPromptDto = TextPromptDto(conversationID = prompt.conversationID)
                     )
-
-//
-//                    val token = "Bearer ${BuildConfig.TOKEN}"
-//                    val generatedText =
-//                        api.prompt(
-//                            token = token,
-//                            textPrompt = TextPrompt(text = text)
-//                        )
-//
                     resp.add(
                         ChatState.Generated(
                             chatID = generated.chatID,// this id identify each generated text from backend
-                            text = generated.text
+                            userID = generated.chatID,
+                            conversationID = generated.conversationID,
+                            text = generated.text,
+                            timestamp = generated.timestamp
                         )
                     )
-//                    // delay(2000L) testing
+                    // delay(2000L) testing
                     _thinkingState.value = false
                     _chatUIState.value = resp
                 }
-
-            } catch (e: Exception) {
-                Log.e("ERROR", "ERROR: $e")
+            } catch (_: Exception) {
             }
         }
     }
 
     // Reply to generated text
-    fun replyToGeneratedTextMessage(prompt: String, textToReply: String) {
+    fun replyToGeneratedTextMessage(conversationID: String, prompt: String, textToReply: String) {
         viewModelScope.launch {
             try {
-                if (textToReply.isNotBlank()) {
-                    val chat = _chatUIState.value.toMutableList()
 
-                    val chatUUID = UUID.randomUUID().toString()
-                    chat.add(
-                        ChatState.Reply(
-                            chatID = chatUUID,
-                            replyText = textToReply,
+                val chat = _chatUIState.value.toMutableList()
+
+
+                val reply =
+                    api.replyToGeneratedText(
+                        token = TOKEN,
+                        textPromptDto = TextPromptDto(
+                            conversationID = conversationID,
                             text = prompt
                         )
                     )
-                    chat.add(ChatState.Loading(chatID = "Reply_Loading-$chatUUID"))
 
-                    _chatUIState.value = chat
 
-                    _thinkingState.value = true
+                chat.add(
+                    ChatState.Reply(
+                        chatID = reply.chatID,
+                        replyText = textToReply,
+                        text = prompt
+                    )
+                )
+                chat.add(ChatState.Loading(chatID = "Reply_Loading-${reply.chatID}"))
 
-                    val responseToReply = _chatUIState.value
-                        .filterNot { it is ChatState.Loading }
-                        .toMutableList()
+                _chatUIState.value = chat
 
-                    val token = "Bearer ${BuildConfig.TOKEN}"
-                    val generatedText =
-                        api.prompt(
-                            token = token,
-                            textPromptDto = TextPromptDto(text = prompt) // this will get an object
-                        )
+                _thinkingState.value = true
 
-                    responseToReply.add(
-                        ChatState.Generated(
-                            chatID = generatedText.chatID,
-                            text = generatedText.text
-                        )
+                val responseToReply = _chatUIState.value
+                    .filterNot { it is ChatState.Loading }
+                    .toMutableList()
+
+                val generatedText =
+                    api.aiResponseToReply(
+                        token = TOKEN,
+                        conversationID = reply.conversationID
                     )
 
-                    _thinkingState.value = false
-                    _chatUIState.value = responseToReply
 
-                }
+                responseToReply.add(
+                    ChatState.Generated(
+                        chatID = generatedText.chatID,
+                        conversationID = generatedText.conversationID,
+                        text = generatedText.text
+                    )
+                )
+
+                _thinkingState.value = false
+                _chatUIState.value = responseToReply
+
             } catch (_: Exception) {
             }
         }
+    }
+
+    companion object {
+        private const val TOKEN = "Bearer ${BuildConfig.TOKEN}"
     }
 
 }

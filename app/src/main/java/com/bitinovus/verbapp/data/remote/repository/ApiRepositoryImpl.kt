@@ -6,9 +6,11 @@ import com.bitinovus.verbapp.data.remote.model.TextPromptDto
 import com.bitinovus.verbapp.data.remote.model.toChatResponseList
 import com.bitinovus.verbapp.data.remote.model.toGeneratedResponse
 import com.bitinovus.verbapp.data.remote.model.toPromptResponse
+import com.bitinovus.verbapp.data.remote.model.toReplyResponse
 import com.bitinovus.verbapp.domain.model.ChatsResponse
 import com.bitinovus.verbapp.domain.model.GeneratedResponse
 import com.bitinovus.verbapp.domain.model.PromptResponse
+import com.bitinovus.verbapp.domain.model.ReplyResponse
 import com.bitinovus.verbapp.domain.repository.ApiRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,6 +35,25 @@ class ApiRepositoryImpl @Inject constructor(
             prompt
         }
 
+    override suspend fun replyToGeneratedText(
+        token: String,
+        textPromptDto: TextPromptDto,
+    ): ReplyResponse = withContext(Dispatchers.IO) {
+        val replyPrompt = try {
+            val resp = api.chatReplyToGenerated(token = token, textPromptDto = textPromptDto)
+            if (resp.isSuccessful) {
+                val body = resp.body()
+                Log.d("CHAT", "BODY : $body")
+                body?.toReplyResponse() ?: ReplyResponse()
+            } else {
+                ReplyResponse()
+            }
+        } catch (_: Exception) {
+            ReplyResponse()
+        }
+        replyPrompt
+    }
+
     override suspend fun aiGeneratedText(
         token: String,
         textPromptDto: TextPromptDto,
@@ -40,6 +61,25 @@ class ApiRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             val generatedResponse = try {
                 val resp = api.aiResponse(token = token, textPromptDto = textPromptDto)
+                if (resp.isSuccessful) {
+                    val body = resp.body()
+                    body?.toGeneratedResponse() ?: GeneratedResponse()
+                } else {
+                    GeneratedResponse()
+                }
+            } catch (_: Exception) {
+                GeneratedResponse()
+            }
+            generatedResponse
+        }
+
+    override suspend fun aiResponseToReply(
+        token: String,
+        conversationID: String,
+    ): GeneratedResponse =
+        withContext(Dispatchers.IO) {
+            val generatedResponse = try {
+                val resp = api.aiResponseReply(token = token, conversationID = conversationID)
                 if (resp.isSuccessful) {
                     val body = resp.body()
                     body?.toGeneratedResponse() ?: GeneratedResponse()

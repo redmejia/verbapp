@@ -113,7 +113,7 @@ fun Chat(
             reverseLayout = true,
         ) {
             items(items = messageList.reversed(), key = { it.chatID }) { chat ->
-                Log.d("CHAT", "Chat: ${messageList.reversed()}")
+                //  Log.d("CHAT", "Chat: ${messageList.reversed()}")
 
                 when (chat) {
                     is ChatState.Prompt ->
@@ -233,7 +233,14 @@ fun Chat(
                                         selectedImage = R.drawable.rounded_reply,
                                         contentDescription = "reply prompt",
                                         onClick = {
-                                            chatViewModel.setReplyTextMessage(chat.text)
+                                            Log.d("CHAT", "Chat: CLICKED >>> ${chat.conversationID} uno")
+                                            chatViewModel.setReplyTextMessage(
+                                                conversationID = chat.conversationID,
+                                                message = chat.text
+                                            )
+
+
+
                                             visible = !visible
                                             keyboardController?.show()
                                         }
@@ -267,7 +274,8 @@ fun Chat(
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .imePadding(),
         ) {
-            if (replyTextMessage != null) {
+            if (replyTextMessage?.generatedTextMessage != null) {
+                // Log.d("CHAT", "Chat: SELECTED ID >>>> ${replyTextMessage?.conversationID}")
                 ReplyBubble(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -282,20 +290,23 @@ fun Chat(
                             .fillMaxWidth()
                             .padding(horizontal = 2.dp, vertical = 2.dp)
                     ) {
-                        Text(
-                            replyTextMessage!!,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = PrimaryBlack00,
-                            modifier = Modifier
-                                .weight(1f)
-                        )
+                        replyTextMessage?.generatedTextMessage?.let {
+                            Text(
+                                it,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = PrimaryBlack00,
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
+                        }
                         Icon(
                             Icons.Filled.Clear,
                             contentDescription = "clear reply bubble",
                             modifier = Modifier.clickable {
                                 chatViewModel.setReplyTextMessage(
-                                    null
+                                    conversationID = null,
+                                    message = null
                                 )
                             }
                         )
@@ -325,12 +336,17 @@ fun Chat(
                         ),
                         onClick = {
                             // chatViewModel.chatPrompt(text = textPrompt)
-                            if (replyTextMessage != null) {
+
+                            if (replyTextMessage?.conversationID != null) {
                                 chatViewModel.replyToGeneratedTextMessage(
+                                    conversationID = replyTextMessage?.conversationID ?: "",
                                     prompt = textPrompt,
-                                    textToReply = replyTextMessage!!
+                                    textToReply = replyTextMessage?.generatedTextMessage ?: ""
                                 )
-                                chatViewModel.setReplyTextMessage(null)
+                                chatViewModel.setReplyTextMessage(
+                                    conversationID = null,
+                                    message = null
+                                )
                             } else {
                                 chatViewModel.chatPrompt(text = textPrompt)
                             }

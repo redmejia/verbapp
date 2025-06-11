@@ -22,6 +22,7 @@ fun GeneratedTextDto.toGeneratedResponse(): GeneratedResponse {
     return GeneratedResponse(
         chatID = chatID,
         userID = userID,
+        conversationID = conversationID,
         timestamp = timestamp,
         text = text,
         metadata = ResponseMetadata(modelName = metadata.modelName)
