@@ -54,32 +54,18 @@ class ApiRepositoryImpl @Inject constructor(
         replyPrompt
     }
 
-    override suspend fun aiGeneratedText(
-        token: String,
-        textPromptDto: TextPromptDto,
-    ): GeneratedResponse =
-        withContext(Dispatchers.IO) {
-            val generatedResponse = try {
-                val resp = api.aiResponse(token = token, textPromptDto = textPromptDto)
-                if (resp.isSuccessful) {
-                    val body = resp.body()
-                    body?.toGeneratedResponse() ?: GeneratedResponse()
-                } else {
-                    GeneratedResponse()
-                }
-            } catch (_: Exception) {
-                GeneratedResponse()
-            }
-            generatedResponse
-        }
-
-    override suspend fun aiResponseToReply(
+    override suspend fun aiResponseGeneratedText(
         token: String,
         conversationID: String,
+        actionType: String,
     ): GeneratedResponse =
         withContext(Dispatchers.IO) {
             val generatedResponse = try {
-                val resp = api.aiResponseReply(token = token, conversationID = conversationID)
+                val resp = api.aiResponse(
+                    token = token,
+                    conversationID = conversationID,
+                    actionType = actionType
+                )
                 if (resp.isSuccessful) {
                     val body = resp.body()
                     body?.toGeneratedResponse() ?: GeneratedResponse()
@@ -91,22 +77,56 @@ class ApiRepositoryImpl @Inject constructor(
             }
             generatedResponse
         }
+//    override suspend fun aiResponseGeneratedText(): GeneratedResponse =
+//        withContext(Dispatchers.IO) {
+//            val generatedResponse = try {
+//                val resp = api.aiResponse(token = token, textPromptDto = textPromptDto)
+//                if (resp.isSuccessful) {
+//                    val body = resp.body()
+//                    body?.toGeneratedResponse() ?: GeneratedResponse()
+//                } else {
+//                    GeneratedResponse()
+//                }
+//            } catch (_: Exception) {
+//                GeneratedResponse()
+//            }
+//            generatedResponse
+//        }
 
-    override suspend fun getAllChats(token: String): List<ChatsResponse> =
-        withContext(Dispatchers.IO) {
-            val chats = try {
-                val resp = api.getChats(token = token)
-                if (resp.isSuccessful) {
-                    val body = resp.body()
-                    body?.toChatResponseList() ?: emptyList<ChatsResponse>()
-                } else {
+//    override suspend fun aiResponseToReply(
+//        token: String,
+//        conversationID: String,
+//    ): GeneratedResponse =
+//        withContext(Dispatchers.IO) {
+//            val generatedResponse = try {
+//                val resp = api.aiResponseReply(token = token, conversationID = conversationID)
+//                if (resp.isSuccessful) {
+//                    val body = resp.body()
+//                    body?.toGeneratedResponse() ?: GeneratedResponse()
+//                } else {
+//                    GeneratedResponse()
+//                }
+//            } catch (_: Exception) {
+//                GeneratedResponse()
+//            }
+//            generatedResponse
+//        }
+
+                override suspend fun getAllChats(token: String): List<ChatsResponse> =
+            withContext(Dispatchers.IO) {
+                val chats = try {
+                    val resp = api.getChats(token = token)
+                    if (resp.isSuccessful) {
+                        val body = resp.body()
+                        body?.toChatResponseList() ?: emptyList<ChatsResponse>()
+                    } else {
+                        emptyList<ChatsResponse>()
+                    }
+                } catch (_: Exception) {
                     emptyList<ChatsResponse>()
                 }
-            } catch (_: Exception) {
-                emptyList<ChatsResponse>()
+                chats
             }
-            chats
-        }
 }
 
 

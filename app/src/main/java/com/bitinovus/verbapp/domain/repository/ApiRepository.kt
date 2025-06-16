@@ -9,7 +9,6 @@ import com.bitinovus.verbapp.domain.model.ReplyResponse
 interface ApiRepository {
     suspend fun prompt(token: String, textPromptDto: TextPromptDto): PromptResponse
     suspend fun replyToGeneratedText(token: String, textPromptDto: TextPromptDto): ReplyResponse
-    suspend fun aiGeneratedText(token: String, textPromptDto: TextPromptDto): GeneratedResponse
-    suspend fun aiResponseToReply(token: String, conversationID: String): GeneratedResponse
+    suspend fun aiResponseGeneratedText(token: String, conversationID: String, actionType: String): GeneratedResponse
     suspend fun getAllChats(token: String): List<ChatsResponse>
 }

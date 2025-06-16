@@ -12,11 +12,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
-//    @POST("chat")
-//    suspend fun chatPrompt(
-//        @Header("Authorization") token: String,
-//        @Body textPrompt: TextPrompt,
-//    ): Response<GeneratedText>
 
     @POST("chat/prompt")
     suspend fun chatPrompt(
@@ -32,18 +27,13 @@ interface ApiService {
         @Body textPromptDto: TextPromptDto,
     ): Response<ReplyTextDto>
 
-    @GET("chat/reply")
-    suspend fun aiResponseReply(
-        @Header("Authorization") token: String,
-        @Query("conversation_id") conversationID: String,
-    ): Response<GeneratedTextDto>
-
-    @POST("chat/ai/text")
+    @GET("chat/ai/resp")
     suspend fun aiResponse(
         @Header("Authorization") token: String,
-        @Body textPromptDto: TextPromptDto, // send conversation id
+        @Query("conversation_id") conversationID: String,
+        @Query("action_type") actionType: String,
     ): Response<GeneratedTextDto>
 
-    @GET("chat")
+    @GET("chats")
     suspend fun getChats(@Header("Authorization") token: String): Response<List<ChatsDto>>
 }

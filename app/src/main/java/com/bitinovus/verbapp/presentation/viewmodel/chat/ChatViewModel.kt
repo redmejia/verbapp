@@ -91,11 +91,14 @@ class ChatViewModel @Inject constructor(
 
                     val chat = _chatUIState.value.toMutableList()
 
+
                     // val token = "Bearer ${BuildConfig.TOKEN}"
                     val prompt = api.prompt(
                         token = TOKEN,
                         textPromptDto = TextPromptDto(text = text)
                     )
+
+                    Log.d("CHAT", "chatPrompt PROMPT REV: $prompt")
 
                     chat.add(
                         ChatState.Prompt(
@@ -113,10 +116,13 @@ class ChatViewModel @Inject constructor(
                         .filterNot { it is ChatState.Loading }
                         .toMutableList()
 
-                    val generated = api.aiGeneratedText(
+                    val generated = api.aiResponseGeneratedText(
                         token = TOKEN,
-                        textPromptDto = TextPromptDto(conversationID = prompt.conversationID)
+                        conversationID = prompt.conversationID,
+                        actionType = ActionType.PROMPT.action
+                        // textPromptDto = TextPromptDto(conversationID = prompt.conversationID)
                     )
+
                     resp.add(
                         ChatState.Generated(
                             chatID = generated.chatID,// this id identify each generated text from backend
@@ -171,12 +177,11 @@ class ChatViewModel @Inject constructor(
                     .toMutableList()
 
                 val generatedText =
-                    api.aiResponseToReply(
+                    api.aiResponseGeneratedText(
                         token = TOKEN,
-                        conversationID = reply.conversationID
+                        conversationID = reply.conversationID,
+                        actionType = ActionType.REPLY.action
                     )
-
-
                 responseToReply.add(
                     ChatState.Generated(
                         chatID = generatedText.chatID,
@@ -197,4 +202,8 @@ class ChatViewModel @Inject constructor(
         private const val TOKEN = "Bearer ${BuildConfig.TOKEN}"
     }
 
+    enum class ActionType(val action: String) {
+        PROMPT("prompt"),
+        REPLY("reply")
+    }
 }

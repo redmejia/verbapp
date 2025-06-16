@@ -68,6 +68,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import com.bitinovus.verbapp.presentation.components.bubble.ActionButton
 import com.bitinovus.verbapp.presentation.components.bubble.ReplyBubble
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryBlack90
+import com.bitinovus.verbapp.presentation.ui.theme.PrimaryGray90
 
 @Composable
 fun Chat(
@@ -113,11 +115,11 @@ fun Chat(
             reverseLayout = true,
         ) {
             items(items = messageList.reversed(), key = { it.chatID }) { chat ->
-                //  Log.d("CHAT", "Chat: ${messageList.reversed()}")
 
                 when (chat) {
                     is ChatState.Prompt ->
                         Bubble(
+                            modifier = Modifier.padding(vertical = 10.dp),
                             backgroundColor = PrimaryPurple40,
                             isSender = true,
                             contentText = {
@@ -132,16 +134,15 @@ fun Chat(
                     is ChatState.Reply -> {
                         Column(
                             modifier = Modifier
-                                .padding(top = 6.dp)
                                 .fillMaxWidth(),
                             horizontalAlignment = Alignment.End
                         ) {
                             ReplyBubble(
                                 modifier = Modifier
-                                    .padding(start = 8.dp, end = 8.dp)
+                                    .padding(top = 12.dp, start = 8.dp, end = 8.dp)
                                     .wrapContentWidth(Alignment.End)
                                     .background(
-                                        color = PrimaryGray00,
+                                        color = PrimaryGray90,
                                         shape = RoundedCornerShape(10.dp)
                                     ),
                                 contentAlignment = Alignment.CenterEnd
@@ -150,7 +151,7 @@ fun Chat(
                                     chat.replyText,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = PrimaryBlack00,
+                                    color = PrimaryBlack90,
                                     modifier = Modifier
                                         .padding(4.dp),
                                 )
@@ -182,6 +183,7 @@ fun Chat(
                         ) {
                             Bubble(
                                 modifier = Modifier
+                                    .padding(top = 10.dp)
                                     .clickable(
                                         indication = null,
                                         interactionSource = null
