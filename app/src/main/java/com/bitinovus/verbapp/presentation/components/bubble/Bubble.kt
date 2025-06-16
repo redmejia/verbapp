@@ -18,19 +18,21 @@ fun Bubble(
     modifier: Modifier = Modifier,
     backgroundColor: Color,
     isSender: Boolean,
+    contentAlignment: Alignment = Alignment.TopStart,
     contentText: @Composable () -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
             .wrapContentWidth(align = if (isSender) Alignment.End else Alignment.Start)
             .shadow(3.dp, RoundedCornerShape(10.dp))
             .background(
                 color = backgroundColor,
                 shape = RoundedCornerShape(10.dp)
             )
-            .padding(5.dp)
+            .padding(5.dp),
+        contentAlignment = contentAlignment
     ) {
         contentText()
     }
